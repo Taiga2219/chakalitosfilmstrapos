@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chakalitos Film</title>
+  <style>
+    :root {
+      --bg: #160b21;
+      --card: #241336;
+      --accent: #c486cb;
+      --hover: #d89ee0;
+      --text: #f8f2fa;
+      --muted: #bfa8c9;
+      --border: #3a2054;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+
+    /* Menú fijo */
+    header { position: fixed; top: 0; left: 0; width: 100%; background: rgba(22, 11, 33, 0.96); border-bottom: 1px solid var(--border); z-index: 1000; }
+    nav { max-width: 1100px; margin: 0 auto; padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem; }
+    .logo { font-weight: 800; font-size: 1.25rem; color: var(--text); text-decoration: none; letter-spacing: 1px; }
+    .logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 0.5rem; list-style: none; flex-wrap: wrap; }
+    .nav-links a { color: var(--muted); text-decoration: none; font-weight: 600; font-size: 0.9rem; padding: 0.45rem 0.75rem; border-radius: 6px; transition: 0.2s; display: inline-block; }
+    .nav-links a:hover { color: var(--accent); background: rgba(196, 134, 203, 0.15); }
+
+    /* Secciones */
+    section { padding: 6rem 1.5rem 3.5rem; max-width: 1100px; margin: 0 auto; scroll-margin-top: 75px; }
+    .title { font-size: 1.9rem; margin-bottom: 0.4rem; border-left: 4px solid var(--accent); padding-left: 1rem; }
+    .sub { color: var(--muted); margin-bottom: 2rem; padding-left: 1.25rem; }
+
+    /* Cortometraje con tu imagen de portada */
+    #cortometraje { padding-top: 8rem; text-align: center; }
+    #cortometraje h1 { font-size: 2.5rem; margin-bottom: 0.8rem; }
+    #cortometraje p { color: var(--muted); max-width: 650px; margin: 0 auto 2rem; }
+
+    .yt-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      width: 100%;
+      max-width: 900px;
+      margin: 0 auto;
+      aspect-ratio: 16/9;
+      background-color: #1d0e2b;
+      background-image: linear-gradient(rgba(22, 11, 33, 0.35), rgba(22, 11, 33, 0.55)), url('imagenes/cotopo.jpg');
+      background-size: cover;
+      background-position: center;
+      border-radius: 12px;
+      border: 2px solid var(--border);
+      text-decoration: none;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+      transition: border-color 0.3s, transform 0.3s;
+    }
+
+    .yt-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-3px);
+    }
+
+    .yt-play-circle {
+      width: 84px;
+      height: 58px;
+      background: rgba(22, 11, 33, 0.92);
+      border: 2px solid var(--accent);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: 0.2s;
+    }
+
+    .yt-play-circle::after {
+      content: "";
+      border-style: solid;
+      border-width: 12px 0 12px 22px;
+      border-color: transparent transparent transparent var(--accent);
+      margin-left: 4px;
+    }
+
+    .yt-card:hover .yt-play-circle {
+      background: var(--accent);
+      transform: scale(1.08);
+    }
+
+    .yt-card:hover .yt-play-circle::after {
+      border-color: transparent transparent transparent var(--bg);
+    }
+
+    .yt-badge {
+      background: rgba(22, 11, 33, 0.92);
+      color: var(--text);
+      padding: 0.5rem 1.3rem;
+      border-radius: 20px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      border: 1px solid var(--accent);
+    }
+
+    /* Menú flotante desplegable de Redes Sociales (IG y TikTok) */
+.social-float {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.75rem;
+}
+
+.social-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(15px);
+  transition: all 0.3s ease;
+}
+
+/* Se despliega al pasar el mouse o enfocar en celular */
+.social-float:hover .social-menu,
+.social-float:focus-within .social-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.social-link {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: var(--card);
+  color: var(--text);
+  text-decoration: none;
+  padding: 0.65rem 1.1rem;
+  border-radius: 30px;
+  border: 1px solid var(--accent);
+  font-size: 0.9rem;
+  font-weight: 700;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+  transition: background 0.2s, color 0.2s, transform 0.2s;
+}
+
+.social-link:hover {
+  background: var(--accent);
+  color: var(--bg);
+  transform: translateX(-4px);
+}
+
+.social-trigger {
+  background: var(--accent);
+  color: var(--bg);
+  border: none;
+  padding: 0.85rem 1.35rem;
+  border-radius: 30px;
+  font-weight: 800;
+  font-size: 0.95rem;
+  cursor: pointer;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.social-trigger:hover {
+  background: var(--hover);
+  transform: scale(1.04);
+}
+
+    /* Cómic */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: center; background: var(--card); padding: 2rem; border-radius: 12px; border: 1px solid var(--border); }
+    .comic-img { background: var(--bg); aspect-ratio: 3/4; border-radius: 8px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border); color: var(--muted); font-weight: 600; }
+    .btn { display: inline-block; background: var(--accent); color: var(--bg); padding: 0.8rem 1.5rem; border-radius: 6px; text-decoration: none; font-weight: 700; margin-top: 1.2rem; transition: 0.2s; }
+    .btn:hover { background: var(--hover); }
+
+    /* Podcasts */
+    .pod-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+    .card { background: var(--card); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border); display: flex; flex-direction: column; justify-content: space-between; }
+    .ep { font-size: 0.8rem; color: var(--accent); font-weight: 700; text-transform: uppercase; }
+    .card h3 { margin: 0.4rem 0; }
+    .card p { color: var(--muted); font-size: 0.9rem; margin-bottom: 1.2rem; }
+    audio { width: 100%; height: 40px; }
+
+    /* Nosotros */
+    .prod-box { background: var(--card); padding: 1.8rem; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 2rem; }
+    .prod-box h3 { color: var(--accent); margin-bottom: 0.5rem; font-size: 1.3rem; }
+    .carousel { display: flex; gap: 1.2rem; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 1rem; scrollbar-color: var(--accent) var(--card); }
+    .member { flex: 0 0 210px; scroll-snap-align: start; background: var(--card); padding: 1.5rem 1rem; border-radius: 12px; text-align: center; border: 1px solid var(--border); }
+    .avatar { width: 100px; height: 100px; border-radius: 50%; background: var(--bg); border: 3px solid var(--accent); margin: 0 auto 0.8rem; display: flex; align-items: center; justify-content: center; color: var(--accent); font-weight: 700; overflow: hidden; }
+    .member span { color: var(--accent); font-size: 0.85rem; font-weight: 600; display: block; margin-top: 0.25rem; }
+
+    /* Making Of */
+    .empty-box { min-height: 180px; border: 1px dashed var(--border); border-radius: 12px; }
+
+    footer { text-align: center; padding: 2.5rem; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.85rem; }
+
+    @media (max-width: 768px) {
+      .grid-2 { grid-template-columns: 1fr; }
+      #cortometraje { padding-top: 9.5rem; }
+    }
+  </style>
+  <style>
+  /* Estilos exactos de la sección Nosotros */
+  #nosotros {
+    background-color: #13091f;
+    color: #ffffff;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    padding: 50px 5%;
+  }
+
+  .nosotros-header {
+    border-left: 3px solid #9d71ea;
+    padding-left: 16px;
+    margin-bottom: 30px;
+  }
+
+  .nosotros-header h2 {
+    margin: 0 0 8px 0;
+    font-size: 26px;
+    font-weight: 700;
+    color: #ffffff;
+  }
+
+  .nosotros-header p {
+    margin: 0;
+    font-size: 14px;
+    color: #b8a9c9;
+  }
+
+  /* Caja principal de la productora */
+  .productora-card {
+    background-color: #211233;
+    border: 1px solid #351f52;
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin-bottom: 28px;
+  }
+
+  .productora-card h3 {
+    margin: 0 0 12px 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: #b388ff;
+  }
+
+  .productora-card p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #e2d9ec;
+    max-width: 900px;
+  }
+
+  /* Carrusel horizontal del equipo */
+  .equipo-carousel {
+    display: flex;
+    gap: 18px;
+    overflow-x: auto;
+    padding-bottom: 16px;
+    scroll-behavior: smooth;
+  }
+
+  /* Personalización de la barra de desplazamiento morada */
+  .equipo-carousel::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  .equipo-carousel::-webkit-scrollbar-track {
+    background: #1d102b;
+    border-radius: 10px;
+  }
+
+  .equipo-carousel::-webkit-scrollbar-thumb {
+    background: #a57ce8;
+    border-radius: 10px;
+  }
+
+  /* Tarjeta de cada integrante */
+  .integrante-card {
+    background-color: #211233;
+    border: 1px solid #351f52;
+    border-radius: 12px;
+    min-width: 210px;
+    flex: 0 0 210px;
+    padding: 32px 16px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+  }
+
+  .integrante-card:hover {
+    transform: translateY(-4px);
+    border-color: #9d71ea;
+  }
+
+  /* Círculo contenedor de la foto con borde lila */
+  .foto-circulo {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    border: 2px solid #b388ff;
+    background-color: #180c26;
+    overflow: hidden;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .foto-circulo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .integrante-card h4 {
+    margin: 0 0 6px 0;
+    font-size: 15px;
+    font-weight: 700;
+    color: #ffffff;
+  }
+
+  .integrante-card p {
+    margin: 0;
+    font-size: 13px;
+    color: #b8a9c9;
+  }
+</style>
+</head>
+<body>
+
+  <header>
+    <nav>
+      <a href="#cortometraje" class="logo">CHAKALITOS<span>FILM</span></a>
+      <ul class="nav-links">
+        <li><a href="#cortometraje">Cortometraje</a></li>
+        <li><a href="#comic">Cómic</a></li>
+        <li><a href="#podcast">Podcasts</a></li>
+        <li><a href="#nosotros">Nosotros</a></li>
+        <li><a href="#making-of">Making Of</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <section id="cortometraje">
+    <h1>TRAPOS</h1>
+    <p>Una breve sinopsis atrapante de tu historia para invitar a darle play.</p>
+    
+    <a href="https://youtu.be" target="_blank" rel="noopener noreferrer" class="yt-card">
+      <div class="yt-play-circle"></div>
+      <span class="yt-badge">Ver Cortometraje en YouTube</span>
+    </a>
+  </section>
+
+  <section id="comic">
+    <h2 class="title">El Cómic</h2>
+    <p class="sub">Expande el universo de la historia con nuestra novela gráfica.</p>
+    <div class="grid-2">
+      <div class="comic-img">
+  <img src="imagenes/comicpo.png" alt="Portada del Cómic" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
+</div>
+      <div>
+        <h3>Capítulo 1: El Origen</h3>
+        <p style="color: var(--muted); margin-top: 0.8rem;">Descubre los eventos previos al cortometraje en este cómic ilustrado.</p>
+        <a href="comic/comic/2.pdf" target="_blank" class="btn">Leer Cómic Online</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="podcast">
+    <h2 class="title">Podcasts</h2>
+    <p class="sub">Escucha nuestros 3 episodios sobre la creación del proyecto.</p>
+    <div class="pod-grid">
+      <div class="card">
+        <div><span class="ep">Episodio 01</span><h3>MariCats</h3><p>Todo desde la perspectiva de MariaCats.</p></div>
+        <audio controls><source src="audio/mariacatscap1.mp3.mpeg" type="audio/mpeg"></audio>
+      </div>
+      <div class="card">
+        <div><span class="ep">Episodio 02</span><h3>Sara</h3><p>Todo desde la perspectiva de Sara.</p></div>
+        <audio controls><source src="audio/Saracap2.mp3.mpeg" type="audio/mpeg"></audio>
+      </div>
+      <div class="card">
+        <div><span class="ep">Episodio 03</span><h3>Mariacast y Sara</h3><p>Escuchalas</p></div>
+        <audio controls><source src="audio/SarayMARIAcap3.mp3.mpeg" type="audio/mpeg"></audio>
+      </div>
+    </div>
+  </section>
+
+  <section id="nosotros">
+  <div class="nosotros-header">
+    <h2>Nosotros</h2>
+    <p>Conoce a la productora y al equipo detrás del proyecto.</p>
+  </div>
+
+  <div class="productora-card">
+    <h3>Chakalitos Film</h3>
+    <p>Somos una productora independiente apasionada por cruzar el cine, la ilustración y el diseño sonoro para crear universos propios con identidad artesanal.</p>
+  </div>
+
+  <div class="equipo-carousel">
+    
+    <!-- Integrante 1 -->
+    <div class="integrante-card">
+      <div class="foto-circulo">
+        <img src="imagenes/fotoroles/" alt="Khaterine Bendezu">
+      </div>
+      <h4>katherine Bendezu</h4>
+      <p>Guion</p>
+    </div>
+
+    <!-- Integrante 2 -->
+    <div class="integrante-card">
+      <div class="foto-circulo">
+        <img src="imagenes/fotoroles/angela.jpeg" alt="Angela Huaman">
+      </div>
+      <h4>Angela Huaman</h4>
+      <p>Producción</p>
+    </div>
+
+    <!-- Integrante 3 -->
+    <div class="integrante-card">
+      <div class="foto-circulo">
+        <img src="imagenes/fotoroles/jerry.png" alt="Jeferson Sanchez">
+      </div>
+      <h4>Jeferson Sanchez</h4>
+      <p>Fotografía</p>
+    </div>
+
+    <!-- Integrante 4 -->
+    <div class="integrante-card">
+      <div class="foto-circulo">
+        <img src="imagenes/fotoroles/jvr.png" alt="Joseph Andrade">
+      </div>
+      <h4>Joseph Andrade</h4>
+      <p>Sonido</p>
+    </div>
+
+    <!-- Integrante 5 -->
+    <div class="integrante-card">
+      <div class="foto-circulo">
+        <img src="imagenes/fotoroles/Mai.jpeg" alt="Mayli Calle">
+      </div>
+      <h4>Mayli Calle</h4>
+      <p>Arte</p>
+    </div>
+
+    <!-- Integrante 6 -->
+    <div class="integrante-card">
+      <div class="foto-circulo">
+        <img src="imagenes/fotoroles/luis.jpeg" alt="Luis Cisneros">
+      </div>
+      <h4>Luis Cisneros</h4>
+      <p>Gaffer</p>
+    </div>
+
+    <!-- Integrante 7 -->
+    <div class="integrante-card">
+      <div class="foto-circulo">
+        <img src="imagenes/fotoroles/lucia.png" alt="Lucia Arguedas">
+      </div>
+      <h4>Lucia Arguedas</h4>
+      <p>Edición</p>
+    </div>
+
+  </div>
+</section>
+
+ <section id="making-of">
+    <h2 class="title">Making Of</h2>
+    <p class="sub">Detrás de cámaras y el proceso de creación del proyecto.</p>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 1.5rem;">
+      
+      <!-- Video Making Of 1 -->
+      <div class="card">
+        <video controls style="width: 100%; aspect-ratio: 16/9; border-radius: 8px; background: #000; margin-bottom: 1rem;">
+          <source src="making off/video1.mp4" type="video/mp4">
+          Tu navegador no soporta el video.
+        </video>
+        <div>
+          <span class="ep">Detrás de Cámaras 01</span>
+          <h3></h3>
+          <p style="margin-bottom: 0;"></p>
+        </div>
+      </div>
+
+      <!-- Video Making Of 2 -->
+      <div class="card">
+        <video controls style="width: 100%; aspect-ratio: 16/9; border-radius: 8px; background: #000; margin-bottom: 1rem;">
+          <source src="making off/video2.mp4" type="video/mp4">
+          Tu navegador no soporta el video.
+        </video>
+        <div>
+          <span class="ep">Detrás de Cámaras 02</span>
+          <h3></h3>
+          <p style="margin-bottom: 0;"></p>
+        </div>
+      </div>
+
+
+    </div>
+  </section>
+
+  <footer><p>© 2026 Chakalitos Film. Todos los derechos reservados.</p></footer>
+  <!-- Botón flotante de Redes Sociales -->
+  <div class="social-float">
+    <div class="social-menu">
+      <!-- Enlace Instagram -->
+      <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="social-link">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+        Instagram
+      </a>
+
+      <!-- Enlace TikTok -->
+      <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" class="social-link">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"></path></svg>
+        TikTok
+      </a>
+    </div>
+
+    <button type="button" class="social-trigger">
+      Síguenos ▲
+    </button>
+  </div>
+
+</body>
+</html>
